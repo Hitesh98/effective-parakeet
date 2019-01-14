@@ -1,11 +1,11 @@
 import java.util.Comparator;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import edu.princeton.cs.algs4.*;
 
 public class BruteCollinearPoints {
 
-    private int numberOfSegments = 0;
     private ArrayList<LineSegment> allSegments = new ArrayList<LineSegment>();
     private LineSegment a;
 
@@ -19,17 +19,26 @@ public class BruteCollinearPoints {
                 throw new java.lang.IllegalArgumentException("Bad Array Of Values");
             }
         }
-        for (int i = 0; i < points.length - 4; i++) {
+        for (int i = 0; i < points.length - 3; i++) {
             Comparator<Point> linear = points[i].slopeOrder();
-            for (int j = i + 1; j < points.length - 3; j++) {
-                if ()
-                for (int k = j + 1; i < points.length - 2; i++) {
-                    for (int l = k + 1; j < points.length - 1; j++) {
-                        if (linear.compare(points[j], points[k]) == 0 && linear.compare(points[k], points[l]) == 0) {
-                            numberOfSegments++;
-                            a = new LineSegment(points[i], points[l]);
-                            allSegments.add(a);
-                        }
+            for (int j = i + 1; j < points.length - 2; j++) {
+                mainloop : for (int k = j + 1; k < points.length - 1; k++) {
+                    for (int l = k + 1; l < points.length; l++) {
+                            Point a1 = points[i];
+                            Point b = points[j];
+                            Point c = points[k];
+                            Point d = points[l];
+                            if (a1.slopeTo(b) == a1.slopeTo(c) && a1.slopeTo(c) == a1.slopeTo(d)) {
+                                Point[] segmental = new Point[4];
+                                segmental[0] = a1;
+                                segmental[1] = b;
+                                segmental[2] = c;
+                                segmental[3] = d;
+                                Arrays.sort(segmental);
+                                a = new LineSegment(segmental[0], segmental[3]);
+                                allSegments.add(a);
+                                break mainloop;
+                            }
                     }
                 }
 
@@ -39,17 +48,12 @@ public class BruteCollinearPoints {
 
 
     public int numberOfSegments() {
-        return numberOfSegments;
+        return allSegments.size();
     }       // the number of line segments
 
 
     public LineSegment[] segments() {
-        LineSegment[] returner = new LineSegment[allSegments.size()];
-        int i = 0;
-        for (LineSegment l : allSegments) {
-            returner[i] = allSegments.get(i);
-            i++;
-        }
+        LineSegment[] returner = allSegments.toArray(new LineSegment[allSegments.size()]);
         return returner;
     }
 
